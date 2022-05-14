@@ -39,7 +39,10 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
 });
 
 // export for test use only
-export async function createServer(root = process.cwd(), isProd = process.env.NODE_ENV === "production") {
+export async function createServer(
+  root = process.cwd(),
+  isProd = process.env.NODE_ENV === "production"
+) {
   const app = express();
   app.set("top-level-oauth-cookie", TOP_LEVEL_OAUTH_COOKIE);
   app.set("active-shopify-shops", ACTIVE_SHOPIFY_SHOPS);
@@ -61,57 +64,70 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
 
   app.get("/products-count", verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    const { Product } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
+    const { Product } = await import(
+      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+    );
 
     const countData = await Product.count({ session });
     res.status(200).send(countData);
   });
 
-  app.get("/register-shop", verifyRequest(app), async (req, res) => {
+  app.put("/shop", verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    const { Webhook } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
 
-    const webhook = new Webhook({ session: session });
-
-    webhook.topic = "carts/create";
-    webhook.address = process.env.HOST + "/cart-created";
-    webhook.format = "json";
-    webhook.fields = ["id", "note"];
-    await webhook.save({});
+    console.log(session);
 
     // const countData = await Product.count({ session });
-    res.status(200).send({ success: true, message: "Notifications enabled successfully" });
+    res
+      .status(200)
+      .send({ success: true, message: "Notifications enabled successfully" });
   });
 
-  app.get("/remove-shop", verifyRequest(app), async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    const { Webhook } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
+  //   app.get("/register-shop", verifyRequest(app), async (req, res) => {
+  //     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+  //     const { Webhook } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
 
-    const webhooks = await Webhook.all({
-      session,
-    });
+  //     const webhook = new Webhook({ session: session });
 
-    const deleteWebhooks = webhooks.map((webhook) => {
-      if (webhook.topic !== "app/uninstalled") {
-        return Webhook.delete({
-          session,
-          id: webhook.id,
-        });
-      }
-    });
+  //     webhook.topic = "carts/create";
+  //     webhook.address = process.env.HOST + "/cart-created";
+  //     webhook.format = "json";
+  //     webhook.fields = ["id", "note"];
+  //     await webhook.save({});
 
-    await Promise.all(deleteWebhooks);
+  //     // const countData = await Product.count({ session });
+  //     res.status(200).send({ success: true, message: "Notifications enabled successfully" });
+  //   });
 
-    // const countData = await Product.count({ session });
-    res.status(200).send({ success: true, message: "Notifications disabled successfully", webhooks });
-  });
+  //   app.get("/remove-shop", verifyRequest(app), async (req, res) => {
+  //     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+  //     const { Webhook } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
 
-  app.post("/cart-created", async (req, res) => {
-    // const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    // await Shopify.Webhooks.Registry.process(req, res);
-    console.log(req);
-    res.json({ success: true });
-  });
+  //     const webhooks = await Webhook.all({
+  //       session,
+  //     });
+
+  //     const deleteWebhooks = webhooks.map((webhook) => {
+  //       if (webhook.topic !== "app/uninstalled") {
+  //         return Webhook.delete({
+  //           session,
+  //           id: webhook.id,
+  //         });
+  //       }
+  //     });
+
+  //     await Promise.all(deleteWebhooks);
+
+  //     // const countData = await Product.count({ session });
+  //     res.status(200).send({ success: true, message: "Notifications disabled successfully", webhooks });
+  //   });
+
+  //   app.post("/cart-created", async (req, res) => {
+  //     // const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+  //     // await Shopify.Webhooks.Registry.process(req, res);
+  //     console.log(req);
+  //     res.json({ success: true });
+  //   });
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {
     try {
@@ -127,7 +143,10 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
   app.use((req, res, next) => {
     const shop = req.query.shop;
     if (Shopify.Context.IS_EMBEDDED_APP && shop) {
-      res.setHeader("Content-Security-Policy", `frame-ancestors https://${shop} https://admin.shopify.com;`);
+      res.setHeader(
+        "Content-Security-Policy",
+        `frame-ancestors https://${shop} https://admin.shopify.com;`
+      );
     } else {
       res.setHeader("Content-Security-Policy", `frame-ancestors 'none';`);
     }
@@ -170,8 +189,12 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
     );
     app.use(vite.middlewares);
   } else {
-    const compression = await import("compression").then(({ default: fn }) => fn);
-    const serveStatic = await import("serve-static").then(({ default: fn }) => fn);
+    const compression = await import("compression").then(
+      ({ default: fn }) => fn
+    );
+    const serveStatic = await import("serve-static").then(
+      ({ default: fn }) => fn
+    );
     const fs = await import("fs");
     app.use(compression());
     app.use(serveStatic(resolve("dist/client")));
