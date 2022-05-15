@@ -55,6 +55,14 @@ export default function applyAuthMiddleware(app) {
 
       console.log(session);
 
+      //   Saving session into database
+      let shop = await Shops.findOne({ shop: session.shop });
+      if (shop) {
+        await Shops.findOneAndUpdate({ shop: session.shop }, session);
+      } else {
+        await Shops.create(session);
+      }
+
       const response = await Shopify.Webhooks.Registry.register({
         shop: session.shop,
         accessToken: session.accessToken,
