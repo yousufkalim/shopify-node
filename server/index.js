@@ -11,7 +11,7 @@ import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import { addAbortSignal } from "stream";
 
-const USE_ONLINE_TOKENS = true;
+const USE_ONLINE_TOKENS = false;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
 
 const PORT = parseInt(process.env.PORT || "8081", 10);
@@ -25,7 +25,7 @@ Shopify.Context.initialize({
   API_VERSION: ApiVersion.April22,
   IS_EMBEDDED_APP: true,
   // This should be replaced with your preferred storage strategy
-  SESSION_STORAGE: new Shopify.Session.MemorySessionStorage(),
+  //   SESSION_STORAGE: new Shopify.Session.MemorySessionStorage(),
 });
 
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
@@ -63,7 +63,11 @@ export async function createServer(
   });
 
   app.get("/products-count", verifyRequest(app), async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      USE_ONLINE_TOKENS
+    );
     const { Product } = await import(
       `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
     );
@@ -73,7 +77,11 @@ export async function createServer(
   });
 
   app.put("/shop", verifyRequest(app), async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      USE_ONLINE_TOKENS
+    );
 
     console.log(session);
 
