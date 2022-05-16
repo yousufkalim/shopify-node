@@ -1,4 +1,5 @@
 import { Shopify } from "@shopify/shopify-api";
+import Shops from "../models/Shops.js";
 
 import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 

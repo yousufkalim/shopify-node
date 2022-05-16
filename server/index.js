@@ -6,6 +6,7 @@ import { Shopify, ApiVersion, DeliveryMethod } from "@shopify/shopify-api";
 import Shops from "./models/Shops.js";
 import "dotenv/config";
 import "./database.js";
+import "./cronjobs/abandonedCheckouts.js";
 
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
@@ -76,6 +77,19 @@ export async function createServer(
     res.status(200).send(countData);
   });
 
+  app.get("/shop", verifyRequest(app), async (req, res) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      USE_ONLINE_TOKENS
+    );
+    let shop = await Shops.findOne({ shop: session.shop });
+
+    res
+      .status(200)
+      .send({ success: true, message: "Shop found successfully", shop });
+  });
+
   app.put("/shop", verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(
       req,
@@ -83,12 +97,17 @@ export async function createServer(
       USE_ONLINE_TOKENS
     );
 
-    console.log(session);
+    let shop = await Shops.findOne({ shop: session.shop });
+    shop.active = !shop.active;
+    await shop.save();
 
     // const countData = await Product.count({ session });
     res
       .status(200)
-      .send({ success: true, message: "Notifications enabled successfully" });
+      .send({
+        success: true,
+        message: "Notifications setting updated successfully",
+      });
   });
 
   //   app.get("/register-shop", verifyRequest(app), async (req, res) => {
