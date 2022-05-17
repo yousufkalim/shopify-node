@@ -7,7 +7,7 @@ import Shops from "./models/Shops.js";
 import "dotenv/config";
 import "./database.js";
 import "./cronjobs/abandonedCheckouts.js";
-
+import routes from "./routes/index.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import { addAbortSignal } from "stream";
@@ -102,13 +102,13 @@ export async function createServer(
     await shop.save();
 
     // const countData = await Product.count({ session });
-    res
-      .status(200)
-      .send({
-        success: true,
-        message: "Notifications setting updated successfully",
-      });
+    res.status(200).send({
+      success: true,
+      message: "Notifications setting updated successfully",
+    });
   });
+
+  app.use("/api", routes);
 
   //   app.get("/register-shop", verifyRequest(app), async (req, res) => {
   //     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
