@@ -11,6 +11,8 @@ import routes from "./routes/index.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import { addAbortSignal } from "stream";
+import morgan from "morgan";
+import cors from "cors";
 
 const USE_ONLINE_TOKENS = false;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
@@ -50,6 +52,11 @@ export async function createServer(
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
 
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
+  app.use(morgan("dev"));
+  app.use(cors({ origin: true }));
+
+  app.use(express.urlencoded({ extended: true })); // to get url encoded data from requests
+  app.use(express.json()); // to send json data in response (It's mandatory in rest api's)
 
   applyAuthMiddleware(app);
 
