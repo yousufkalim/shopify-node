@@ -1,0 +1,88 @@
+<button is="email-button">
+   <span class="visually-hidden">Please enter your email!</span>
+ </button>
+
+<email-popup init>
+   <template email-popup>
+     <p class="epm_title">Get 10% off your order</p>
+     <p class="epm_description">
+       Sign up and unlock your instant discount
+     </p>
+     <input
+       class="epm_input"
+       placeholder="Email Address"
+     ></input>
+     <div class="epm_submit_btn">
+       <p class="epm_submit_btn_text">Claim Discount</p>
+     </div>
+     <p class="epm_cancel_btn_text">
+       No thanks
+     </p>
+     <p class="epm_footer_text">
+       You are signing up to receive communication via email and can
+       unsubscribe at any time.
+     </p>
+   </template>
+ </email-popup>
+
+ <style>
+   .visually-hidden {
+     position: absolute!important;
+     overflow: hidden;
+     width: 1px;
+     height: 1px;
+     margin: -1px;
+     padding: 0;
+     border: 0;
+     clip: rect(0 0 0 0);
+     word-wrap: normal!important;
+   }
+   
+   @-webkit-keyframes rainbow {
+     0% {border-color: hsl(0, 100%, 50%);}
+     14% {border-color: hsl(30,100%,50%);}
+     28% {border-color: hsl(60,100%,50%);}
+     42% {border-color: hsl(120,100%,50%);}
+     56% {border-color:  hsl(240,100%,50%);}
+     70% {border-color: hsl(280,100%,50%);}
+     84% {border-color: hsl(320,100%,50%);}
+     100% {border-color: hsl(255, 100%, 50%);}
+   }
+   button[is="email-button"] {
+     position: fixed;
+     bottom: 15px;
+     right: 15px;
+     width: 80px;
+     height: 80px;
+     background: url("{{ 'email.png' | asset_img_url: '180x180' }}") no-repeat center;
+     border-radius: 50%;
+     border: 4px solid hsl(0, 100%, 50%);
+     animation: rainbow 10s infinite alternate;
+     -webkit-animation: rainbow 10s infinite alternate;
+     padding: 0;
+     font: inherit;
+     cursor: pointer;
+     outline: inherit;
+     z-index: 100;
+     transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+   }
+   button[is="email-button"]:hover {
+     transform: scale(1.10);
+   }
+   button[is="email-button"]:active {
+     transform: scale(0.95);
+   }
+   canvas:empty {
+     display: initial;
+   }
+ </style>
+
+ {% schema %}
+ {
+   "name": "Email",
+   "target": "body",
+   "stylesheet": "email-popup.css",
+   "javascript": "email-popup.js",
+   "settings": []
+ }
+ {% endschema %}
