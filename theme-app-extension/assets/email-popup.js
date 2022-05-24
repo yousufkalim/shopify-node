@@ -1,57 +1,53 @@
-class EmailButton extends HTMLButtonElement {
-  constructor() {
-    super();
-  }
+// Elements
+var popup = document.getElementById("epm_container");
+var email = document.getElementById("epm_email_input");
+var submit_btn = document.getElementById("epm_submit_btn");
+var alert_container = document.getElementById("epm_alert");
+var alert_txt = document.getElementById("epm_alert_text");
+var alert_close = document.getElementById("epm_alert_close");
+var close_btn = document.getElementById("epm_close_btn");
 
-  connectedCallback() {
-    this.addEventListener("click", this.showPopup);
-  }
-
-  disconnectedCallback() {
-    this.removeEventListener("click", this.showPopup);
-  }
-
-  showPopup() {
-    const el = document.createElement("email-popup");
-    document.body.appendChild(el);
-  }
+let epm = localStorage.getItem("epm");
+if (!epm) {
+  setTimeout(() => {
+    popup.style.display = "block";
+  }, 3000);
 }
 
-let emailPopupTemplate = null;
-class EmailPopup extends HTMLElement {
-  get template() {
-    return emailPopupTemplate && emailPopupTemplate.cloneNode(true);
-  }
-  set template(value) {
-    emailPopupTemplate = value;
+submit_btn.addEventListener("click", handleSubmit);
+close_btn.addEventListener("click", handleClose);
+alert_close.addEventListener("click", handleAlertClose);
+
+function handleSubmit() {
+  if (!email.value) {
+    alert_container.classList.add("epm_error");
+    alert_txt.innerText = "Email is not provided";
+    return null;
   }
 
-  constructor() {
-    super();
-    // If we haven't yet set our template, than we don't want to render this custom element right away,
-    // so store its contents and then remove it from the DOM.
-    if (this.hasAttribute("init")) this.remove();
+  localStorage.setItem(
+    "epm",
+    JSON.stringify({
+      email: email.value,
+    })
+  );
 
-    // If the template is contained within the custom element,
-    // than its the instance of it that was included in the page response.
-    this.template = this.template || this.querySelector("template").content;
-  }
+  email.value = "";
+  alert_container.classList.remove("epm_error");
+  alert_container.classList.add("epm_success");
+  alert_txt.innerText = "We've got your email";
 
-  connectedCallback() {
-    this.appendChild(this.template);
-    this.img && this.appendChild(this.img.cloneNode());
-    this.querySelector("[close-button]").addEventListener(
-      "click",
-      () => this.remove(),
-      { once: true }
-    );
-    document.addEventListener(
-      "keydown",
-      ({ key }) => key === "Escape" && this.remove(),
-      { once: true }
-    );
-  }
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 2000);
 }
 
-customElements.define("email-button", EmailButton, { extends: "button" });
-customElements.define("email-popup", EmailPopup);
+function handleAlertClose() {
+  alert_container.classList.remove("epm_error");
+  alert_container.classList.remove("epm_success");
+  alert_txt.innerText = "";
+}
+
+function handleClose() {
+  popup.style.display = "none";
+}
