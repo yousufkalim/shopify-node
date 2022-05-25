@@ -34,7 +34,7 @@ const itemsSchema = new mongoose.Schema({
 });
 
 // Schema
-const checkoutSchema = new mongoose.Schema(
+const cartSchema = new mongoose.Schema(
   {
     token: String,
     customer: String,
@@ -52,5 +52,5 @@ const checkoutSchema = new mongoose.Schema(
   }
 );
 
-const Checkouts = mongoose.model("checkouts", checkoutSchema);
-export default Checkouts;
+const Carts = mongoose.model("carts", cartSchema);
+export default Carts;
