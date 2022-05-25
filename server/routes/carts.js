@@ -4,7 +4,7 @@
  */
 import express from "express";
 const router = express.Router();
-import { getAll } from "../controllers/checkouts.js";
+import { getAll, create } from "../controllers/carts.js";
 import { checkAdminAuth } from "../middleware/adminAuth.js";
 
 /**
@@ -14,6 +14,7 @@ import { checkAdminAuth } from "../middleware/adminAuth.js";
 
 // Read
 router.get("/", checkAdminAuth, getAll); // Get all users at once
+router.post("/", create);
 
 // Export
 export default router;
