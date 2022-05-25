@@ -51,3 +51,47 @@ function handleAlertClose() {
 function handleClose() {
   popup.style.display = "none";
 }
+
+const { fetch: origFetch } = window;
+window.fetch = async (...args) => {
+  const response = await origFetch(...args);
+  const cloned_response = response.clone();
+  const { pathname, host } = new URL(cloned_response.url);
+
+  if (pathname === "/cart.js") {
+    /* work with the cloned response in a separate promise
+       chain -- could use the same chain with `await`. */
+    let epm = localStorage.getItem("epm");
+    epm = JSON.parse(epm);
+    cloned_response
+      .json()
+      .then(async (body) => {
+        body.email = epm.email;
+        body.host = host;
+        body.items = JSON.stringify(body.items);
+
+        const urlencoded = new URLSearchParams();
+        for (const property in body) {
+          urlencoded.append(property, body[property]);
+        }
+
+        await fetch("https://b484-39-59-44-110.ngrok.io/api/carts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
+          },
+          body: urlencoded,
+        });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  /* the original response can be resolved unmodified: */
+  //return response;
+
+  /* or mock the response: */
+  return response;
+};
