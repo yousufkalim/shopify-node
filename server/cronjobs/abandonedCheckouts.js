@@ -16,8 +16,8 @@ cron.schedule(
       await Promise.all(
         carts.map((cart) => {
           if (
-            moment(cart.updatedAt).add(1, "minutes").isBefore() &&
-            moment(cart.updatedAt).add(10, "minutes").isAfter()
+            moment(cart.updatedAt).add(10, "minutes").isBefore() &&
+            moment(cart.updatedAt).add(19, "minutes").isAfter()
           ) {
             cart_ids.push(cart._id);
             return sendEmail(cart);
