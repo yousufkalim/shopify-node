@@ -4,7 +4,7 @@
  */
 import express from "express";
 const router = express.Router();
-import { getAll, create } from "../controllers/carts.js";
+import { getAll, create, clicked } from "../controllers/carts.js";
 import { checkAdminAuth } from "../middleware/adminAuth.js";
 
 /**
@@ -15,6 +15,7 @@ import { checkAdminAuth } from "../middleware/adminAuth.js";
 // Read
 router.get("/", checkAdminAuth, getAll); // Get all users at once
 router.post("/", create);
+router.get("/clicked/:token", clicked);
 
 // Export
 export default router;

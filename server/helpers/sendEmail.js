@@ -29,7 +29,7 @@ export default function sendEmail(cart) {
       from: `${sender_name} <${sender_email}>`,
       to: cart.customer,
       subject: "Your order is still open",
-      text: `Looks like you left something behind, Finish your order before your items sell out https://${cart.shop}`,
+      text: `Looks like you left something behind, Finish your order before your items sell out https://${cart.shop}/?epm_cart_token=${cart.token}`,
     };
 
     // Sending email

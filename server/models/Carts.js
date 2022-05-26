@@ -36,6 +36,11 @@ const cartSchema = new mongoose.Schema(
     item_count: Number,
     currency: String,
     sent_emails: [Date],
+    status: {
+      type: String,
+      enum: ["abandoned", "clicked", "recovered"],
+      default: "abandoned",
+    },
   },
   {
     timestamps: true,

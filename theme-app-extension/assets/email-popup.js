@@ -13,6 +13,17 @@ if (epm_temp_cart) {
   }, 2000);
 }
 
+let query = new URLSearchParams(window.location.search);
+let epm_cart_token = query.get("epm_cart_token");
+
+if (epm_cart_token) {
+  fetch(
+    `https://b484-39-59-44-110.ngrok.io/api/carts/clicked/${epm_cart_token}`
+  )
+    .then(console.log)
+    .catch(console.log);
+}
+
 submit_btn.addEventListener("click", handleSubmit);
 alert_close.addEventListener("click", handleAlertClose);
 

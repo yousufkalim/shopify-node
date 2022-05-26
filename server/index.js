@@ -73,7 +73,15 @@ export async function createServer(
 
   app.post("/order-created", async (req, res) => {
     try {
-      await Carts.findOneAndDelete({ token: req.body?.cart_token });
+      let { cart_token: token } = req.body;
+      let cart = await Carts.findOne({ token });
+
+      if (cart.status === "clicked") {
+        await Carts.findOneAndUpdate({ token }, { status: "recovered" });
+      } else {
+        await Carts.findOneAndDelete({ token });
+      }
+
       res.json({ success: true });
     } catch (error) {
       console.log(`Failed to process webhook: ${error}`);

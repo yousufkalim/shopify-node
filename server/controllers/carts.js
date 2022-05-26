@@ -45,7 +45,11 @@ export const create = async (req, res) => {
 
     let cart = await Carts.findOne({ token: body.token });
     if (cart) {
-      cart = await Carts.findByIdAndUpdate(cart._id, body, { new: true });
+      cart = await Carts.findByIdAndUpdate(
+        cart._id,
+        { ...body, status: "abandoned" },
+        { new: true }
+      );
     } else {
       cart = await Carts.create({
         ...body,
@@ -56,6 +60,18 @@ export const create = async (req, res) => {
     }
 
     res.json({ success: true, cart }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const clicked = async (req, res) => {
+  try {
+    let { token } = req.params;
+    await Carts.findOneAndUpdate({ token }, { status: "clicked" });
+    res.json({ success: true });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);
