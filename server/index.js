@@ -11,7 +11,6 @@ import "./cronjobs/abandonedCheckouts.js";
 import routes from "./routes/index.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
-import { addAbortSignal } from "stream";
 import morgan from "morgan";
 import cors from "cors";
 
@@ -39,6 +38,7 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
     delete ACTIVE_SHOPIFY_SHOPS[shop];
+    await Shops.findOneAndUpdate({ shop }, { active: false });
   },
 });
 
@@ -135,52 +135,6 @@ export async function createServer(
   });
 
   app.use("/api", routes);
-
-  //   app.get("/register-shop", verifyRequest(app), async (req, res) => {
-  //     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-  //     const { Webhook } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
-
-  //     const webhook = new Webhook({ session: session });
-
-  //     webhook.topic = "carts/create";
-  //     webhook.address = process.env.HOST + "/cart-created";
-  //     webhook.format = "json";
-  //     webhook.fields = ["id", "note"];
-  //     await webhook.save({});
-
-  //     // const countData = await Product.count({ session });
-  //     res.status(200).send({ success: true, message: "Notifications enabled successfully" });
-  //   });
-
-  //   app.get("/remove-shop", verifyRequest(app), async (req, res) => {
-  //     const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-  //     const { Webhook } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
-
-  //     const webhooks = await Webhook.all({
-  //       session,
-  //     });
-
-  //     const deleteWebhooks = webhooks.map((webhook) => {
-  //       if (webhook.topic !== "app/uninstalled") {
-  //         return Webhook.delete({
-  //           session,
-  //           id: webhook.id,
-  //         });
-  //       }
-  //     });
-
-  //     await Promise.all(deleteWebhooks);
-
-  //     // const countData = await Product.count({ session });
-  //     res.status(200).send({ success: true, message: "Notifications disabled successfully", webhooks });
-  //   });
-
-  //   app.post("/cart-created", async (req, res) => {
-  //     // const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-  //     // await Shopify.Webhooks.Registry.process(req, res);
-  //     console.log(req);
-  //     res.json({ success: true });
-  //   });
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {
     try {
