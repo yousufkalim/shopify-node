@@ -1,4 +1,7 @@
-// Init
+/**
+ * Shops model
+ * @author Yousuf Kalim
+ */
 import mongoose from "mongoose";
 
 // Schema

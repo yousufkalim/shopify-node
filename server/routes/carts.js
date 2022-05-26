@@ -1,5 +1,5 @@
 /**
- * Checkout CRUD routes
+ * Cart CRUD routes
  * @author Shuja Naqvi
  */
 import express from "express";
@@ -13,9 +13,9 @@ import { checkAdminAuth } from "../middleware/adminAuth.js";
  */
 
 // Read
-router.get("/", checkAdminAuth, getAll); // Get all users at once
-router.post("/", create);
-router.get("/clicked/:token", clicked);
+router.get("/", checkAdminAuth, getAll); // Get all carts at once
+router.post("/", create); // create or update cart from storefront
+router.get("/clicked/:token", clicked); // when user clicks on email link
 
 // Export
 export default router;

@@ -21,6 +21,11 @@ export const getAll = async (req, res) => {
   }
 };
 
+/**
+ * Create or update the cart by storefront
+ * @param {object} req
+ * @param {object} res
+ */
 export const create = async (req, res) => {
   try {
     let { body } = req;
@@ -34,6 +39,7 @@ export const create = async (req, res) => {
         .json({ success: false, message: "Shop not found" });
     }
 
+    // If item count is 0, it means user has deleted it's cart and we have to remove it from DB
     if (body.item_count == 0) {
       let cart = await Carts.findOneAndDelete({ token: body.token });
       return res.json({
@@ -44,6 +50,8 @@ export const create = async (req, res) => {
     }
 
     let cart = await Carts.findOne({ token: body.token });
+
+    // If we found the cart already, it mean's user is updating it's cart
     if (cart) {
       cart = await Carts.findByIdAndUpdate(
         cart._id,
@@ -51,6 +59,7 @@ export const create = async (req, res) => {
         { new: true }
       );
     } else {
+      // Creating cart for first time
       cart = await Carts.create({
         ...body,
         customer: body.email,
@@ -67,10 +76,16 @@ export const create = async (req, res) => {
   }
 };
 
+/**
+ * Email link clicked
+ * @param {object} req
+ * @param {object} res
+ */
 export const clicked = async (req, res) => {
   try {
     let { token } = req.params;
-    await Carts.findOneAndUpdate({ token }, { status: "clicked" });
+    await Carts.findOneAndUpdate({ token }, { status: "clicked" }); // Changing the status to clicked to track if user has clicked on email link
+
     res.json({ success: true });
   } catch (err) {
     // Error handling

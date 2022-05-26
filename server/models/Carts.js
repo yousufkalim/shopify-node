@@ -1,6 +1,10 @@
-// Init
+/**
+ * Carts model
+ * @author Yousuf Kalim
+ */
 import mongoose from "mongoose";
 
+// Items schema
 const itemsSchema = new mongoose.Schema({
   id: Number,
   quantity: Number,

@@ -1,4 +1,7 @@
-// Init
+/**
+ * Admin model
+ * @author Yousuf Kalim
+ */
 import mongoose from "mongoose";
 
 // Admin Schema

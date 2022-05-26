@@ -1,3 +1,7 @@
+/**
+ * Verify routes middleware
+ * @author Yousuf Kalim
+ */
 import { Shopify } from "@shopify/shopify-api";
 
 const TEST_GRAPHQL_QUERY = `

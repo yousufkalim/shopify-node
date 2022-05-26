@@ -1,3 +1,7 @@
+/**
+ * Shopify app backend server
+ * @author Yousuf Kalim
+ */
 // @ts-check
 import { resolve } from "path";
 import express from "express";
@@ -14,6 +18,7 @@ import verifyRequest from "./middleware/verify-request.js";
 import morgan from "morgan";
 import cors from "cors";
 
+// Setting online token to false to use access token for long term
 const USE_ONLINE_TOKENS = false;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
 
@@ -38,6 +43,8 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
     delete ACTIVE_SHOPIFY_SHOPS[shop];
+
+    // Deactivating shop when merchant uninstalls the app
     await Shops.findOneAndUpdate({ shop }, { active: false });
   },
 });
@@ -53,7 +60,7 @@ export async function createServer(
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
 
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
-  app.use(morgan("dev"));
+  app.use(morgan("dev")); //logs
   app.use(cors({ origin: true }));
 
   app.use(express.urlencoded({ extended: true })); // to get url encoded data from requests
@@ -71,6 +78,7 @@ export async function createServer(
     }
   });
 
+  //   this api will be called by webhook whenever we user creates an order, so then we will updated the cart linked to that order
   app.post("/order-created", async (req, res) => {
     try {
       let { cart_token: token } = req.body;
@@ -103,6 +111,7 @@ export async function createServer(
     res.status(200).send(countData);
   });
 
+  //   Get shop api for merchant
   app.get("/shop", verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(
       req,
@@ -116,6 +125,7 @@ export async function createServer(
       .send({ success: true, message: "Shop found successfully", shop });
   });
 
+  //   Merchant - to enable and disable notifications
   app.put("/shop", verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(
       req,
@@ -134,6 +144,7 @@ export async function createServer(
     });
   });
 
+  //   All the api routes
   app.use("/api", routes);
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {
@@ -144,8 +155,6 @@ export async function createServer(
       res.status(500).send(error.message);
     }
   });
-
-  app.use(express.json());
 
   app.use((req, res, next) => {
     const shop = req.query.shop;

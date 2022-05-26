@@ -1,3 +1,7 @@
+/**
+ * Auth middleware
+ * @author Yousuf Kalim
+ */
 import { Shopify } from "@shopify/shopify-api";
 import Shops from "../models/Shops.js";
 
@@ -62,10 +66,10 @@ export default function applyAuthMiddleware(app) {
         await Shops.create(session);
       }
 
+      //   Registering orders/create webhook to track orders
       const { Webhook } = await import(
         `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
       );
-
       const webhook = new Webhook({ session: session });
       webhook.topic = "orders/create";
       webhook.address = process.env.HOST + "/order-created";
