@@ -34,14 +34,19 @@ export const create = async (req, res) => {
         .json({ success: false, message: "Shop not found" });
     }
 
-    await Carts.create({
-      ...body,
-      customer: body.email,
-      shop: body.host,
-      shop_id: shop._id,
-    });
+    let cart = await Carts.findOne({ token: body.token });
+    if (cart) {
+      cart = await Carts.findByIdAndUpdate(cart._id, body);
+    } else {
+      cart = await Carts.create({
+        ...body,
+        customer: body.email,
+        shop: body.host,
+        shop_id: shop._id,
+      });
+    }
 
-    res.json({ success: true }); // Success
+    res.json({ success: true, cart }); // Success
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);
