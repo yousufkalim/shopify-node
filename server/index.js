@@ -4,6 +4,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { Shopify, ApiVersion, DeliveryMethod } from "@shopify/shopify-api";
 import Shops from "./models/Shops.js";
+import Carts from "./models/Carts.js";
 import "dotenv/config";
 import "./database.js";
 import "./cronjobs/abandonedCheckouts.js";
@@ -64,6 +65,16 @@ export async function createServer(
     try {
       await Shopify.Webhooks.Registry.process(req, res);
       console.log(`Webhook processed, returned status code 200`);
+    } catch (error) {
+      console.log(`Failed to process webhook: ${error}`);
+      res.status(500).send(error.message);
+    }
+  });
+
+  app.post("/order-created", async (req, res) => {
+    try {
+      await Carts.findOneAndDelete({ token: req.body?.cart_token });
+      res.json({ success: true });
     } catch (error) {
       console.log(`Failed to process webhook: ${error}`);
       res.status(500).send(error.message);

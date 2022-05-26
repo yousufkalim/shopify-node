@@ -54,8 +54,6 @@ export default function applyAuthMiddleware(app) {
         })
       );
 
-      console.log(session);
-
       //   Saving session into database
       let shop = await Shops.findOne({ shop: session.shop });
       if (shop) {
@@ -63,6 +61,17 @@ export default function applyAuthMiddleware(app) {
       } else {
         await Shops.create(session);
       }
+
+      const { Webhook } = await import(
+        `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+      );
+
+      const webhook = new Webhook({ session: session });
+      webhook.topic = "orders/create";
+      webhook.address = process.env.HOST + "/order-created";
+      webhook.format = "json";
+      webhook.fields = ["cart_token"];
+      await webhook.save({});
 
       const response = await Shopify.Webhooks.Registry.register({
         shop: session.shop,
@@ -80,6 +89,7 @@ export default function applyAuthMiddleware(app) {
       // Redirect to app with shop parameter upon auth
       res.redirect(`/?shop=${session.shop}&host=${host}`);
     } catch (e) {
+      console.log("Error --> ", e);
       switch (true) {
         case e instanceof Shopify.Errors.InvalidOAuthError:
           res.status(400);
