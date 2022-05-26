@@ -2,9 +2,7 @@
  * @author Yousuf Kalim
  */
 import cron from "node-cron";
-import Shops from "../models/Shops.js";
 import Carts from "../models/Carts.js";
-import { Shopify } from "@shopify/shopify-api";
 import sendEmail from "../helpers/sendEmail.js";
 import moment from "moment";
 
@@ -51,24 +49,32 @@ cron.schedule(
   "00 00 * * *",
   async () => {
     try {
-      let checkouts = await Checkouts.find({
-        expired: false,
-        created_at: {
+      const carts = await Carts.find({
+        "sent_emails.1": { $exists: false },
+        updatedAt: {
           $gt: new Date(Date.now() - 47 * 60 * 60 * 1000),
-          $lt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          $lt: new Date(Date.now() - 23 * 60 * 60 * 1000),
         },
       });
 
-      await Promise.all(checkouts.map((checkout) => sendEmail(checkout)));
-
+      let cart_ids = new Array();
       await Promise.all(
-        checkouts.map((checkout) =>
-          Checkouts.findByIdAndUpdate(checkout._id, { expired: true })
-        )
+        carts.map((cart) => {
+          cart_ids.push(cart._id);
+          return sendEmail(cart);
+        })
       );
-      console.log(
-        `24 hrs email sent successfully to ${checkouts.length} users`
+
+      await Carts.updateMany(
+        { _id: { $in: cart_ids } },
+        {
+          $push: {
+            sent_emails: new Date(),
+          },
+        }
       );
+
+      console.log(`24 hrs email sent successfully to ${carts.length} users`);
     } catch (err) {
       console.log("Error occurred while sending 10 min emails", err);
     }
@@ -78,5 +84,3 @@ cron.schedule(
     timezone: "Asia/Karachi",
   }
 );
-
-setTimeout(async () => {}, 10000);
