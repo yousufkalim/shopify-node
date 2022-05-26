@@ -34,9 +34,18 @@ export const create = async (req, res) => {
         .json({ success: false, message: "Shop not found" });
     }
 
+    if (body.item_count == 0) {
+      let cart = await Carts.findOneAndDelete({ token: body.token });
+      return res.json({
+        success: true,
+        message: "Cart deleted successfully",
+        cart,
+      }); // Success
+    }
+
     let cart = await Carts.findOne({ token: body.token });
     if (cart) {
-      cart = await Carts.findByIdAndUpdate(cart._id, body);
+      cart = await Carts.findByIdAndUpdate(cart._id, body, { new: true });
     } else {
       cart = await Carts.create({
         ...body,
