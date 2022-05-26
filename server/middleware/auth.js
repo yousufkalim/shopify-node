@@ -57,10 +57,7 @@ export default function applyAuthMiddleware(app) {
       //   Saving session into database
       let shop = await Shops.findOne({ shop: session.shop });
       if (shop) {
-        await Shops.findOneAndUpdate(
-          { shop: session.shop },
-          { ...session, active: true }
-        );
+        await Shops.findOneAndUpdate({ shop: session.shop }, session);
       } else {
         await Shops.create(session);
       }
