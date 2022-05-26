@@ -11,7 +11,10 @@ cron.schedule(
   "*/10 * * * *",
   async () => {
     try {
-      const carts = await Carts.find({ "sent_emails.0": { $exists: false } });
+      const carts = await Carts.find({
+        "sent_emails.0": { $exists: false },
+        status: "abandoned",
+      });
       let cart_ids = new Array();
       await Promise.all(
         carts.map((cart) => {
@@ -51,6 +54,7 @@ cron.schedule(
     try {
       const carts = await Carts.find({
         "sent_emails.1": { $exists: false },
+        status: "abandoned",
         updatedAt: {
           $gt: new Date(Date.now() - 47 * 60 * 60 * 1000),
           $lt: new Date(Date.now() - 23 * 60 * 60 * 1000),
