@@ -28,8 +28,8 @@ export default function sendEmail(cart) {
     var mailOptions = {
       from: `${sender_name} <${sender_email}>`,
       to: cart.customer,
-      subject: "Abandoned checkout notification",
-      text: `Hello, You left an item in cart without purchasing please click the link below to complete your checkout`,
+      subject: "Your order is still open",
+      text: `Looks like you left something behind, Finish your order before your items sell out https://${cart.shop}`,
     };
 
     // Sending email
