@@ -17,9 +17,7 @@ let query = new URLSearchParams(window.location.search);
 let epm_cart_token = query.get("epm_cart_token");
 
 if (epm_cart_token) {
-  fetch(
-    `https://b484-39-59-44-110.ngrok.io/api/carts/clicked/${epm_cart_token}`
-  )
+  fetch(`/apps/epm/api/carts/clicked/${epm_cart_token}`)
     .then(console.log)
     .catch(console.log);
 }
@@ -46,7 +44,7 @@ function handleSubmit() {
   for (const property in body) {
     urlencoded.append(property, body[property]);
   }
-  fetch("https://b484-39-59-44-110.ngrok.io/api/carts", {
+  fetch("/apps/epm/api/carts", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -103,7 +101,7 @@ window.fetch = async (...args) => {
             urlencoded.append(property, body[property]);
           }
 
-          await fetch("https://b484-39-59-44-110.ngrok.io/api/carts", {
+          await fetch("/apps/epm/api/carts", {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
