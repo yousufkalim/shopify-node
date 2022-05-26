@@ -13,7 +13,7 @@ const sender_password = process.env.MAILER_PASSWORD;
  * @param {string} password
  * @return {void}
  */
-export default function sendEmail(checkout) {
+export default function sendEmail(cart) {
   return new Promise((resolve, reject) => {
     // Sender mail server config
     var transporter = nodemailer.createTransport({
@@ -27,9 +27,9 @@ export default function sendEmail(checkout) {
     // Send email options
     var mailOptions = {
       from: `${sender_name} <${sender_email}>`,
-      to: checkout.email,
+      to: cart.customer,
       subject: "Abandoned checkout notification",
-      text: `Hello ${checkout.first_name}, You left an item in cart without purchasing please click the link below to complete your checkout ${checkout.abandoned_checkout_url}`,
+      text: `Hello, You left an item in cart without purchasing please click the link below to complete your checkout`,
     };
 
     // Sending email

@@ -35,6 +35,7 @@ const cartSchema = new mongoose.Schema(
     total_discount: Number,
     item_count: Number,
     currency: String,
+    sent_emails: [Date],
   },
   {
     timestamps: true,
