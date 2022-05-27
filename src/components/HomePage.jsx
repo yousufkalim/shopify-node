@@ -1,15 +1,7 @@
-import {
-  Card,
-  Page,
-  Layout,
-  TextContainer,
-  Image,
-  Stack,
-  Link,
-  Heading,
-} from "@shopify/polaris";
+import { Page, Layout } from "@shopify/polaris";
 import { ShopCard } from "./ShopCard";
 import { Statistics } from "./Statistics";
+import { Table } from "./Table";
 
 export function HomePage() {
   return (
@@ -22,7 +14,12 @@ export function HomePage() {
           </Layout.Section>
         </Layout>
       </div>
-      <Statistics />
+      <div style={{ marginBottom: "20px" }}>
+        <Statistics />
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <Table />
+      </div>
     </Page>
   );
 }
