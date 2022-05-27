@@ -1,3 +1,4 @@
+/* Overlay */
 .epm_container {
   width: 100%;
   height: 100%;
@@ -11,6 +12,7 @@
   display: none;
 }
 
+/* Email popup */
 .epm_email_popup {
   position: fixed;
   top: 50%;
@@ -47,6 +49,7 @@
   outline: inherit;
 }
 
+/* Popup title */
 .epm_title {
   font-size: 28px;
   font-weight: 900;
@@ -55,6 +58,7 @@
   /* margin-bottom: 3%; */
 }
 
+/* Popup description */
 .epm_description {
   font-size: 22px;
   font-weight: 500;
@@ -64,6 +68,7 @@
   text-align: center;
 }
 
+/* Popup email input */
 .epm_input {
   width: 70%;
   padding: 16px;
@@ -76,6 +81,7 @@
   /* margin-bottom: 3%; */
 }
 
+/* Popup submit button */
 .epm_submit_btn {
   height: 40pt;
   width: 70% !important;
@@ -126,6 +132,7 @@
   display: none;
 }
 
+/* Alert close button */
 .epm_alert_close {
   position: absolute;
   font-size: 1.5rem;
