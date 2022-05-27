@@ -2,14 +2,29 @@ import { Card, Layout, DataTable } from "@shopify/polaris";
 
 export function Table() {
   const rows = [
-    ["Emerald Silk Gown", "$875.00", 124689, 140, "$122,500.00"],
-    ["Mauve Cashmere Scarf", "$230.00", 124533, 83, "$19,090.00"],
     [
-      "Navy Merino Wool Blazer with khaki chinos and yellow belt",
-      "$445.00",
-      124518,
-      32,
-      "$14,240.00",
+      "yousufkalim@outlook.com",
+      "iPhone X and 2 others",
+      "27/05/2022, 14:54:36",
+      "1,000 PKR",
+      "Abandoned",
+      "2 Emails sent",
+    ],
+    [
+      "john@yahoo.com",
+      "MacBook Pro",
+      "22/05/2022, 14:54:36",
+      "4,999 PKR",
+      "Clicked",
+      "1 Email sent",
+    ],
+    [
+      "smith@gmail.com",
+      "Samsung 32 GB USB",
+      "15/05/2022, 14:54:36",
+      "100 PKR",
+      "Recovered",
+      "2 Emails sent",
     ],
   ];
 
@@ -20,21 +35,23 @@ export function Table() {
           <DataTable
             columnContentTypes={[
               "text",
-              "numeric",
-              "numeric",
-              "numeric",
-              "numeric",
+              "text",
+              "text",
+              "number",
+              "text",
+              "text",
             ]}
             headings={[
-              "Product",
-              "Price",
-              "SKU Number",
-              "Net quantity",
-              "Net sales",
+              "Customer",
+              "Items",
+              "Abandoned At",
+              "Cart Value",
+              "Status",
+              "Activity",
             ]}
             rows={rows}
-            totals={["", "", "", 255, "$155,830.00"]}
-            footerContent={`Showing ${rows.length} of ${rows.length} results`}
+            footerContent={`Total 100 PKR recovered out of 5,099 PKR`}
+            showTotalsInFooter
           />
         </Card>
       </Layout.Section>
