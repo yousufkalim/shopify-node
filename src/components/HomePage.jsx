@@ -1,24 +1,49 @@
+import { useEffect, useState } from "react";
 import { Page, Layout } from "@shopify/polaris";
 import { ShopCard } from "./ShopCard";
 import { Statistics } from "./Statistics";
 import { Table } from "./Table";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { userLoggedInFetch } from "../App";
 
 export function HomePage() {
+  let [shop, setShop] = useState({});
+  let [carts, setCarts] = useState([]);
+  let [statistics, setStatistics] = useState([]);
+
+  const app = useAppBridge();
+  const fetch = userLoggedInFetch(app);
+
+  useEffect(() => {
+    getShop();
+  }, []);
+
+  const getShop = async () => {
+    const { shop, carts, statistics } = await fetch("/api/shops").then((res) =>
+      res.json()
+    );
+    if (shop) {
+      setShop(shop);
+      setCarts(carts);
+      setStatistics(statistics);
+    }
+  };
+
   return (
     <Page fullWidth>
       <div style={{ marginBottom: "20px" }}>
         <Layout>
           <Layout.Section secondary>
             {/* <NotificationCard /> */}
-            <ShopCard />
+            <ShopCard shop={shop} setShop={setShop} />
           </Layout.Section>
         </Layout>
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <Statistics />
+        <Statistics statistics={statistics} />
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <Table />
+        <Table carts={carts} statistics={statistics} />
       </div>
     </Page>
   );

@@ -4,31 +4,19 @@ import { Toast, useAppBridge } from "@shopify/app-bridge-react";
 
 import { userLoggedInFetch } from "../App";
 
-export function ShopCard() {
-  let [active, setActive] = useState(false);
+export function ShopCard({ shop, setShop }) {
   let [registerLoader, setRegisterLoader] = useState(false);
   const [registerResult, setRegisterResults] = useState(false);
 
   const app = useAppBridge();
   const fetch = userLoggedInFetch(app);
 
-  useEffect(() => {
-    getShop();
-  }, []);
-
-  const getShop = async () => {
-    const { shop } = await fetch("/shop").then((res) => res.json());
-    if (shop) {
-      setActive(shop.active);
-    }
-  };
-
   const handleActive = async () => {
     setRegisterLoader(true);
-    setActive(!active);
-    const { shop } = await fetch("/shop", {
+    setShop({ ...shop, active: !shop.active });
+    await fetch("/shop", {
       method: "PUT",
-      body: JSON.stringify({ active: !active }),
+      body: JSON.stringify({ active: !shop.active }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -39,7 +27,7 @@ export function ShopCard() {
 
   const toastMarkup = registerResult && (
     <Toast
-      content={`Notifications ${active ? "enabled" : "disabled"}`}
+      content={`Notifications ${shop.active ? "enabled" : "disabled"}`}
       onDismiss={() => setRegisterResults(false)}
     />
   );
@@ -54,11 +42,11 @@ export function ShopCard() {
             after 10 minutes of adding an item into cart.
           </p>
           <Button
-            primary={!active}
+            primary={!shop.active}
             loading={registerLoader}
             onClick={handleActive}
           >
-            {active ? "Disable" : "Enable"} notifications
+            {shop.active ? "Disable" : "Enable"} notifications
           </Button>
         </TextContainer>
       </Card>

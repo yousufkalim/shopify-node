@@ -3,9 +3,9 @@
  * @author Shuja Naqvi
  */
 import express from "express";
-const router = express.Router();
-import { getAll } from "../controllers/shops.js";
+import { getAll, getShop } from "../controllers/shops.js";
 import { checkAdminAuth } from "../middleware/adminAuth.js";
+const router = express.Router();
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -13,7 +13,8 @@ import { checkAdminAuth } from "../middleware/adminAuth.js";
  */
 
 // Read
-router.get("/", checkAdminAuth, getAll); // Get all users at once
+// router.get("/", checkAdminAuth, getAll); // Get all users at once
+router.get("/", getShop); // Get all users at once
 
 // Export
 export default router;

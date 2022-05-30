@@ -141,6 +141,7 @@ export async function createServer(
     res.status(200).send({
       success: true,
       message: "Notifications setting updated successfully",
+      shop,
     });
   });
 

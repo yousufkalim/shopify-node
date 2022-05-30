@@ -1,6 +1,6 @@
 import { Card, Layout, DataTable } from "@shopify/polaris";
 
-export function Table() {
+export function Table({ carts, statistics }) {
   const rows = [
     [
       "yousufkalim@outlook.com",
@@ -49,8 +49,8 @@ export function Table() {
               "Status",
               "Activity",
             ]}
-            rows={rows}
-            footerContent={`Total 100 PKR recovered out of 5,099 PKR`}
+            rows={carts}
+            footerContent={`Total ${statistics.recovered_value} PKR recovered out of ${statistics.total_value} PKR`}
             showTotalsInFooter
           />
         </Card>
