@@ -34,6 +34,12 @@ export const getShop = async (req, res) => {
   try {
     const session = await Shopify.Utils.loadCurrentSession(req, res, false);
 
+    if (!session) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Your session has been expired" });
+    }
+
     // Getting shop
     let shop = await Shops.findOne({ shop: session.shop });
 
@@ -95,15 +101,13 @@ export const getShop = async (req, res) => {
     });
 
     // Done
-    res
-      .status(200)
-      .send({
-        success: true,
-        message: "Shop found successfully",
-        shop,
-        carts,
-        statistics,
-      });
+    res.status(200).send({
+      success: true,
+      message: "Shop found successfully",
+      shop,
+      carts,
+      statistics,
+    });
   } catch (err) {
     // Error handling
     console.log("Error ----> ", err);
