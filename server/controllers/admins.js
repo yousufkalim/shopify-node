@@ -191,3 +191,39 @@ export const getAllCarts = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+/**
+ * Get statistics
+ * @param {object} req
+ * @param {object} res
+ */
+export const getStatistics = async (req, res) => {
+  try {
+    const allShops = await Shops.find().count();
+    const allCarts = await Carts.find().count();
+    const abandoned = await Carts.find({ status: "abandoned" }).count();
+    const clicked = await Carts.find({ status: "clicked" }).count();
+    const recovered = await Carts.find({ status: "recovered" }).count();
+    const tenMinEmails = await Carts.find({
+      "sent_emails.0": { $exists: true },
+    }).count();
+    const dayEmails = await Carts.find({
+      "sent_emails.1": { $exists: true },
+    }).count();
+
+    const statistics = {
+      allShops,
+      allCarts,
+      abandoned,
+      clicked,
+      recovered,
+      sent_emails: tenMinEmails + dayEmails,
+    };
+
+    res.json({ success: true, statistics }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

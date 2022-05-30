@@ -10,6 +10,7 @@ import {
   confirmAuth,
   getAllShops,
   getAllCarts,
+  getStatistics,
 } from "../controllers/admins.js";
 import { checkAdminAuth } from "../middleware/adminAuth.js";
 
@@ -21,5 +22,6 @@ router.get("/", (req, res) => res.json({ message: "hello world" })); // test rou
 
 router.get("/shops", checkAdminAuth, getAllShops); // Get all users at once
 router.get("/carts", checkAdminAuth, getAllCarts); // Get all carts at once
+router.get("/statistics", checkAdminAuth, getStatistics);
 
 export default router;
