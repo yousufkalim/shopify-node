@@ -56,17 +56,20 @@ export const getShop = async (req, res) => {
       abandoned: carts.filter((a) => a.status === "abandoned").length,
       clicked: carts.filter((a) => a.status === "clicked").length,
       recovered: carts.filter((a) => a.status === "recovered").length,
-      total_value: carts.reduce((a, b) => a + (b.total_price || 0), 0),
-      recovered_value: carts
-        .filter((a) => a.status === "recovered")
-        .reduce((a, b) => a + (b.total_price || 0), 0),
+      total_value:
+        carts.reduce((a, b) => a + (b.total_price || 0), 0) +
+        carts[0]?.currency,
+      recovered_value:
+        carts
+          .filter((a) => a.status === "recovered")
+          .reduce((a, b) => a + (b.total_price || 0), 0) + carts[0]?.currency,
     };
 
     // Making array of arrays to show on merchant panel's table
     carts = carts.map((cart) => {
       let length = cart.items.length;
       let title =
-        length > 0 ? ` and ${length} ${length > 1 ? "others" : "other"}` : "";
+        length > 1 ? ` and ${length} ${length > 2 ? "others" : "other"}` : "";
       cart.title = cart.items[0]?.title + title;
       cart.sent_emails = `${cart.sent_emails.length || "No "} ${
         cart.sent_emails.length > 1 ? "emails" : "email"

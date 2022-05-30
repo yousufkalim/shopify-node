@@ -50,7 +50,9 @@ export function Table({ carts, statistics }) {
               "Activity",
             ]}
             rows={carts}
-            footerContent={`Total ${statistics.recovered_value} PKR recovered out of ${statistics.total_value} PKR`}
+            footerContent={`Total ${
+              statistics.recovered_value || 0
+            } recovered out of ${statistics.total_value || 0}`}
             showTotalsInFooter
           />
         </Card>

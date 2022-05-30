@@ -139,6 +139,7 @@ export const getAllCarts = async (req, res) => {
           customer: 1,
           createdAt: 1,
           total_price: 1,
+          shop: 1,
           currency: 1,
           sent_emails: 1,
           status: 1,
@@ -169,6 +170,7 @@ export const getAllCarts = async (req, res) => {
       } sent`;
 
       return [
+        cart.shop,
         cart.customer,
         cart.title,
         new Date(cart.createdAt).toLocaleString(),
