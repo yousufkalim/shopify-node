@@ -3,6 +3,8 @@
  * @author Yousuf Kalim
  */
 import Admins from "../models/Admins.js";
+import Shops from "../models/Shops.js";
+import Carts from "../models/Carts.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const tokenSecret = process.env.JWT_SECRET;
@@ -105,4 +107,36 @@ export const login = async (req, res) => {
 export const confirmAuth = async (req, res) => {
   // If user authenticated
   res.json({ success: true, admin: req.admin, token: req.token });
+};
+
+/**
+ * Get all shops
+ * @param {object} req
+ * @param {object} res
+ */
+export const getAllShops = async (req, res) => {
+  try {
+    const shops = await Shops.find(); // Finding all the shops from db
+    res.json({ success: true, shops }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**
+ * Get all carts
+ * @param {object} req
+ * @param {object} res
+ */
+export const getAllCarts = async (req, res) => {
+  try {
+    const carts = await Carts.find(); // Finding all the carts from db
+    res.json({ success: true, carts }); // Success
+  } catch (err) {
+    // Error handling
+    console.log("Error ----> ", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };

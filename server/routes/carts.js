@@ -4,8 +4,7 @@
  */
 import express from "express";
 const router = express.Router();
-import { getAll, create, clicked } from "../controllers/carts.js";
-import { checkAdminAuth } from "../middleware/adminAuth.js";
+import { create, clicked } from "../controllers/carts.js";
 
 /**
  * ////////////////////////// Routes /////////////////////////
@@ -13,7 +12,6 @@ import { checkAdminAuth } from "../middleware/adminAuth.js";
  */
 
 // Read
-router.get("/", checkAdminAuth, getAll); // Get all carts at once
 router.post("/", create); // create or update cart from storefront
 router.get("/clicked/:token", clicked); // when user clicks on email link
 

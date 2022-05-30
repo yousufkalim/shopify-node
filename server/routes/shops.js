@@ -3,8 +3,7 @@
  * @author Shuja Naqvi
  */
 import express from "express";
-import { getAll, getShop } from "../controllers/shops.js";
-import { checkAdminAuth } from "../middleware/adminAuth.js";
+import { getShop } from "../controllers/shops.js";
 const router = express.Router();
 
 /**
@@ -13,7 +12,6 @@ const router = express.Router();
  */
 
 // Read
-// router.get("/", checkAdminAuth, getAll); // Get all users at once
 router.get("/", getShop); // Get all users at once
 
 // Export

@@ -6,22 +6,6 @@ import Carts from "../models/Carts.js";
 import Shops from "../models/Shops.js";
 
 /**
- * Get all carts
- * @param {object} req
- * @param {object} res
- */
-export const getAll = async (req, res) => {
-  try {
-    const carts = await Carts.find(); // Finding all the carts from db
-    res.json({ success: true, carts }); // Success
-  } catch (err) {
-    // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
-
-/**
  * Create or update the cart by storefront
  * @param {object} req
  * @param {object} res
