@@ -3,6 +3,9 @@
  * @author Yousuf Kalim
  */
 
+// Indicator
+console.log("Abandoned carts extension is loaded");
+
 // Importing elements
 var popup = document.getElementById("epm_container");
 var email = document.getElementById("epm_email_input");
