@@ -100,14 +100,19 @@ window.fetch = async (...args) => {
   const { pathname, host } = new URL(cloned_response.url);
   let epm = localStorage.getItem("epm"); // getting the email from DB
 
-  if (pathname === "/cart.js") {
+  if (pathname === "/cart/add" || pathname === "/cart/change") {
     /* work with the cloned response in a separate promise
         chain -- could use the same chain with `await`. */
     epm = JSON.parse(epm);
 
     // Calling our api with cart and email appended
-    cloned_response
-      .json()
+    fetch("/cart.js", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
       .then(async (body) => {
         body.host = host;
         body.items = JSON.stringify(body.items);
