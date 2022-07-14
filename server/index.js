@@ -13,21 +13,24 @@ import "dotenv/config";
 import "./database.js";
 import "./cronjobs/abandonedCheckouts.js";
 import routes from "./routes/index.js";
+import gdprRoutes from "./routes/gdpr.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
+import validShopifyRequest from "valid-shopify-request";
 import morgan from "morgan";
 import cors from "cors";
 
 // Setting online token to false to use access token for long term
 const USE_ONLINE_TOKENS = false;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
+const api_secret = process.env.SHOPIFY_API_SECRET;
 
 const PORT = parseInt(process.env.PORT || "8081", 10);
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
-  API_SECRET_KEY: process.env.SHOPIFY_API_SECRET,
+  API_SECRET_KEY: api_secret,
   SCOPES: process.env.SCOPES.split(","),
   HOST_NAME: process.env.HOST.replace(/https:\/\//, ""),
   API_VERSION: ApiVersion.April22,
@@ -146,6 +149,20 @@ export async function createServer(
   });
 
   //   All the api routes
+  app.use(
+    "/api/gdpr",
+    async (req, res, next) => {
+      try {
+        await validShopifyRequest(api_secret, req);
+        next();
+      } catch (error) {
+        res
+          .status(401)
+          .json({ success: false, message: "Access denied! (HMAC)" });
+      }
+    },
+    gdprRoutes
+  );
   app.use("/api", routes);
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {

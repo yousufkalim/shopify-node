@@ -7,12 +7,10 @@ const router = express.Router();
 import adminRoutes from "./admins.js";
 import checkoutRoutes from "./carts.js";
 import shopRoutes from "./shops.js";
-import gdprRoutes from "./gdpr.js";
 
 // Parent Routes
 router.use("/admins", adminRoutes); // All the user routes
 router.use("/shops", shopRoutes); // All the auth routes
 router.use("/carts", checkoutRoutes); // All the auth routes
-router.use("/gdpr", gdprRoutes); // All the gdpr routes
 // Export
 export default router;
