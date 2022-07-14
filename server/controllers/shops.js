@@ -1,6 +1,6 @@
 /**
  * Shops CRUD controllers
- * @author Shuja Naqvi
+ * @author Yousuf Kalim
  */
 import express from "express";
 import { Shopify } from "@shopify/shopify-api";

@@ -1,6 +1,6 @@
 /**
  * Shops CRUD routes
- * @author Shuja Naqvi
+ * @author Yousuf Kalim
  */
 import express from "express";
 import { getShop } from "../controllers/shops.js";

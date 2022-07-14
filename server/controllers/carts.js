@@ -1,6 +1,6 @@
 /**
  * carts CRUD controllers
- * @author Shuja Naqvi
+ * @author Yousuf Kalim
  */
 import Carts from "../models/Carts.js";
 import Shops from "../models/Shops.js";
