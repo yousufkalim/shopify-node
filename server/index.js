@@ -153,7 +153,7 @@ export async function createServer(
     "/api/gdpr",
     async (req, res, next) => {
       try {
-        await validShopifyRequest(api_secret, req);
+        await validShopifyRequest(api_secret, req.query);
         next();
       } catch (error) {
         res
