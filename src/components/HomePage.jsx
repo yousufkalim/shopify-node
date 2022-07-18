@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { Page, Layout } from "@shopify/polaris";
-import { ShopCard } from "./ShopCard";
-import { Statistics } from "./Statistics";
-import { Table } from "./Table";
-import { useAppBridge } from "@shopify/app-bridge-react";
-import { userLoggedInFetch } from "../App";
+import { useEffect, useState } from 'react';
+import { Page, Layout } from '@shopify/polaris';
+import { Instructions } from './Instructions';
+import { ShopCard } from './ShopCard';
+import { Statistics } from './Statistics';
+import { Table } from './Table';
+import { useAppBridge } from '@shopify/app-bridge-react';
+import { userLoggedInFetch } from '../App';
 
 export function HomePage() {
   let [shop, setShop] = useState({});
@@ -19,9 +20,7 @@ export function HomePage() {
   }, []);
 
   const getShop = async () => {
-    const { shop, carts, statistics } = await fetch("/api/shops").then((res) =>
-      res.json()
-    );
+    const { shop, carts, statistics } = await fetch('/api/shops').then((res) => res.json());
     if (shop) {
       setShop(shop);
       setCarts(carts);
@@ -31,7 +30,17 @@ export function HomePage() {
 
   return (
     <Page fullWidth>
-      <div style={{ marginBottom: "20px" }}>
+      {shop.showInstructions && (
+        <div style={{ marginBottom: '20px' }}>
+          <Layout>
+            <Layout.Section secondary>
+              {/* <NotificationCard /> */}
+              <Instructions shop={shop} setShop={setShop} />
+            </Layout.Section>
+          </Layout>
+        </div>
+      )}
+      <div style={{ marginBottom: '20px' }}>
         <Layout>
           <Layout.Section secondary>
             {/* <NotificationCard /> */}
@@ -39,10 +48,10 @@ export function HomePage() {
           </Layout.Section>
         </Layout>
       </div>
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: '20px' }}>
         <Statistics statistics={statistics} />
       </div>
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: '20px' }}>
         <Table carts={carts} statistics={statistics} />
       </div>
     </Page>
