@@ -42,15 +42,15 @@ Shopify.Context.initialize({
 // Storing the currently active shops in memory will force them to re-login when your server restarts. You should
 // persist this object in your app.
 const ACTIVE_SHOPIFY_SHOPS = {};
-Shopify.Webhooks.Registry.addHandler('APP_UNINSTALLED', {
-  path: '/webhooks',
-  webhookHandler: async (topic, shop, body) => {
-    delete ACTIVE_SHOPIFY_SHOPS[shop];
+// Shopify.Webhooks.Registry.addHandler('APP_UNINSTALLED', {
+//   path: '/webhooks',
+//   webhookHandler: async (topic, shop, body) => {
+//     delete ACTIVE_SHOPIFY_SHOPS[shop];
 
-    // Deactivating shop when merchant uninstalls the app
-    await Shops.findOneAndUpdate({ shop }, { active: false });
-  },
-});
+//     // Deactivating shop when merchant uninstalls the app
+//     await Shops.findOneAndUpdate({ shop }, { active: false });
+//   },
+// });
 
 // export for test use only
 export async function createServer(root = process.cwd(), isProd = process.env.NODE_ENV === 'production') {
@@ -70,8 +70,13 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
 
   app.post('/webhooks', async (req, res) => {
     try {
-      await Shopify.Webhooks.Registry.process(req, res);
+      delete ACTIVE_SHOPIFY_SHOPS[req.body.domain];
+      // Deactivating shop when merchant uninstalls the app
+      await Shops.findOneAndUpdate({ shop: req.body.domain }, { active: false });
+
       console.log(`Webhook processed, returned status code 200`);
+
+      res.json({ success: true });
     } catch (error) {
       console.log(`Failed to process webhook: ${error}`);
       res.status(500).send(error.message);
