@@ -102,6 +102,29 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
     }
   });
 
+  app.use((req, res, next) => {
+    const shop = req.query.shop;
+    if (Shopify.Context.IS_EMBEDDED_APP && shop) {
+      res.setHeader('Content-Security-Policy', `frame-ancestors https://${shop} https://admin.shopify.com;`);
+    } else {
+      res.setHeader('Content-Security-Policy', `frame-ancestors 'none';`);
+    }
+    next();
+  });
+
+  app.use('/*', (req, res, next) => {
+    const shop = req.query.shop;
+
+    // Detect whether we need to reinstall the app, any request from Shopify will
+    // include a shop in the query parameters.
+    // @ts-ignore
+    if (app.get('active-shopify-shops')[shop] === undefined && shop) {
+      res.redirect(`/auth?shop=${shop}`);
+    } else {
+      next();
+    }
+  });
+
   app.get('/products-count', verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, USE_ONLINE_TOKENS);
     const { Product } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
@@ -153,29 +176,6 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
       res.status(200).send(response.body);
     } catch (error) {
       res.status(500).send(error.message);
-    }
-  });
-
-  app.use((req, res, next) => {
-    const shop = req.query.shop;
-    if (Shopify.Context.IS_EMBEDDED_APP && shop) {
-      res.setHeader('Content-Security-Policy', `frame-ancestors https://${shop} https://admin.shopify.com;`);
-    } else {
-      res.setHeader('Content-Security-Policy', `frame-ancestors 'none';`);
-    }
-    next();
-  });
-
-  app.use('/*', (req, res, next) => {
-    const shop = req.query.shop;
-
-    // Detect whether we need to reinstall the app, any request from Shopify will
-    // include a shop in the query parameters.
-    // @ts-ignore
-    if (app.get('active-shopify-shops')[shop] === undefined && shop) {
-      res.redirect(`/auth?shop=${shop}`);
-    } else {
-      next();
     }
   });
 
