@@ -8,7 +8,7 @@ import { useAppBridge } from '@shopify/app-bridge-react';
 import { userLoggedInFetch } from '../App';
 
 export function HomePage() {
-  let [shop, setShop] = useState({});
+  let [shop, setShop] = useState({ active: true });
   let [carts, setCarts] = useState([]);
   let [statistics, setStatistics] = useState([]);
   const [onboarded, setOnboarded] = useState(false);
