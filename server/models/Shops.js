@@ -16,10 +16,6 @@ const shopSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    showInstructions: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
     timestamps: true,
