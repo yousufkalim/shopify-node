@@ -89,16 +89,16 @@ export async function createServer(root = process.cwd(), isProd = process.env.NO
       let { cart_token: token } = req.body;
       let cart = await Carts.findOne({ token });
 
-      if (cart.status === 'clicked') {
+      if (cart && cart.status === 'clicked') {
         await Carts.findOneAndUpdate({ token }, { status: 'recovered' });
-      } else {
+      } else if (cart) {
         await Carts.findOneAndDelete({ token });
       }
 
       res.json({ success: true });
     } catch (error) {
       console.log(`Failed to process webhook: ${error}`);
-      res.status(500).send(error.message);
+      res.status(200).send(error.message);
     }
   });
 
