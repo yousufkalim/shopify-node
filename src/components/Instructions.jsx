@@ -1,18 +1,30 @@
 import { Card, TextContainer, Button } from '@shopify/polaris';
+import { useAppBridge } from '@shopify/app-bridge-react';
 
-export function Instructions({ setOnboarded }) {
+import { userLoggedInFetch } from '../App';
+
+export function Instructions({ shop, setShop }) {
   let contentStyle = {
     fontSize: '17px',
     fontWeight: '500',
     marginRight: '10px',
   };
 
+  const app = useAppBridge();
+  const fetch = userLoggedInFetch(app);
+
   const handleClick = async () => {
     setTimeout(() => {
-      setOnboarded(true);
+      setShop({ ...shop, showInstructions: false });
     }, 400);
 
-    localStorage.setItem('onboarded', true);
+    await fetch('/shop', {
+      method: 'PUT',
+      body: JSON.stringify({ showInstructions: false }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   };
 
   return (

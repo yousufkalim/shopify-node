@@ -11,15 +11,11 @@ export function HomePage() {
   let [shop, setShop] = useState({ active: true });
   let [carts, setCarts] = useState([]);
   let [statistics, setStatistics] = useState([]);
-  const [onboarded, setOnboarded] = useState(false);
 
   const app = useAppBridge();
   const fetch = userLoggedInFetch(app);
 
   useEffect(() => {
-    if (localStorage.getItem('onboarded')) {
-      setOnboarded(true);
-    }
     getShop();
   }, []);
 
@@ -34,12 +30,12 @@ export function HomePage() {
 
   return (
     <Page fullWidth>
-      {!onboarded && (
+      {shop.showInstructions && (
         <div style={{ marginBottom: '20px' }}>
           <Layout>
             <Layout.Section secondary>
               {/* <NotificationCard /> */}
-              <Instructions setOnboarded={setOnboarded} />
+              <Instructions shop={shop} setShop={setShop} />
             </Layout.Section>
           </Layout>
         </div>
