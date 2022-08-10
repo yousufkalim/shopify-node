@@ -2,8 +2,8 @@
  * carts CRUD controllers
  * @author Yousuf Kalim
  */
-import Carts from "../models/Carts.js";
-import Shops from "../models/Shops.js";
+import Carts from '../models/Carts.js';
+import Shops from '../models/Shops.js';
 
 /**
  * Create or update the cart by storefront
@@ -18,9 +18,7 @@ export const create = async (req, res) => {
     const shop = await Shops.findOne({ shop: body.host, active: true });
 
     if (!shop) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Shop not found" });
+      return res.status(404).json({ success: false, message: 'Shop not found' });
     }
 
     // If item count is 0, it means user has deleted it's cart and we have to remove it from DB
@@ -28,7 +26,7 @@ export const create = async (req, res) => {
       let cart = await Carts.findOneAndDelete({ token: body.token });
       return res.json({
         success: true,
-        message: "Cart deleted successfully",
+        message: 'Cart deleted successfully',
         cart,
       }); // Success
     }
@@ -37,11 +35,7 @@ export const create = async (req, res) => {
 
     // If we found the cart already, it mean's user is updating it's cart
     if (cart) {
-      cart = await Carts.findByIdAndUpdate(
-        cart._id,
-        { ...body, status: "abandoned" },
-        { new: true }
-      );
+      cart = await Carts.findByIdAndUpdate(cart._id, { ...body, status: 'abandoned' }, { new: true });
     } else {
       // Creating cart for first time
       cart = await Carts.create({
@@ -55,8 +49,8 @@ export const create = async (req, res) => {
     res.json({ success: true, cart }); // Success
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -68,12 +62,27 @@ export const create = async (req, res) => {
 export const clicked = async (req, res) => {
   try {
     let { token } = req.params;
-    await Carts.findOneAndUpdate({ token }, { status: "clicked" }); // Changing the status to clicked to track if user has clicked on email link
+    await Carts.findOneAndUpdate({ token }, { status: 'clicked' }); // Changing the status to clicked to track if user has clicked on email link
 
     res.json({ success: true });
   } catch (err) {
     // Error handling
-    console.log("Error ----> ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+/**
+ * unsubscribe cart emails
+ * @param {object} req
+ * @param {object} res
+ */
+export const unsubscribe = async (req, res) => {
+  try {
+    res.send('You have successfully unsubscribed from cart emails');
+  } catch (err) {
+    // Error handling
+    console.log('Error ----> ', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
