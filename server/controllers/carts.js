@@ -2,6 +2,7 @@
  * carts CRUD controllers
  * @author Yousuf Kalim
  */
+import { Shopify } from '@shopify/shopify-api';
 import Carts from '../models/Carts.js';
 import Shops from '../models/Shops.js';
 
@@ -45,6 +46,14 @@ export const create = async (req, res) => {
         shop_id: shop._id,
       });
     }
+
+    // Creating customer on shopify admin
+    const { Customer } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
+    const customer = new Customer({ session: shop });
+    customer.email = cart.customer;
+    await customer.save({
+      update: true,
+    });
 
     res.json({ success: true, cart }); // Success
   } catch (err) {
