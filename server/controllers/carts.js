@@ -49,11 +49,15 @@ export const create = async (req, res) => {
 
     // Creating customer on shopify admin
     const { Customer } = await import(`@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`);
+
     const customer = new Customer({ session: shop });
     customer.email = cart.customer;
-    await customer.save({
-      update: true,
-    });
+    customer
+      .save({
+        update: true,
+      })
+      .then()
+      .catch(console.log);
 
     res.json({ success: true, cart }); // Success
   } catch (err) {
